@@ -16,9 +16,10 @@ import matplotlib.pyplot as plt
 print("\nSITKA RECORDS: \n")
 
 open_file_s = open("sitka_weather_2018_simple.csv", "r")
-csv_file_s = csv.reader(open_file_s, delimiter = ",")
+csv_file_s = csv.DictReader(open_file_s, delimiter = ",")
 header_row_s = next(csv_file_s)
 print(header_row_s)
+
 for index_s, column_header_s in enumerate(header_row_s):
     print(index_s, column_header_s)
 
@@ -37,11 +38,11 @@ dates_s = []
 # If any are found, that row will not be processed - 
 # the user will be notified that data is missing for that date.
 
-for row_s in csv_file_s:
+for header_row_s in csv_file_s:
     try:
-        high_s = int(row_s[5])
-        low_s = int(row_s[6])
-        date_s = datetime.strptime(row_s[2], "%Y-%m-%d")
+        high_s = int(header_row_s["TMAX"])
+        low_s = int(header_row_s["TMIN"])
+        date_s = datetime.strptime(header_row_s["DATE"], "%Y-%m-%d")
     except ValueError:
         print(f"Missing data for entry {date_s}")
     else:
@@ -54,9 +55,10 @@ for row_s in csv_file_s:
 print("\nDEATH VALLEY RECORDS: \n")
 
 open_file_dv = open("death_valley_2018_simple.csv", "r")
-csv_file_dv = csv.reader(open_file_dv, delimiter = ",")
+csv_file_dv = csv.DictReader(open_file_dv, delimiter = ",")
 header_row_dv = next(csv_file_dv)
 print(header_row_dv)
+
 for index_dv, column_header_dv in enumerate(header_row_dv):
     print(index_dv, column_header_dv)
 
@@ -64,11 +66,11 @@ highs_dv = []
 lows_dv = []
 dates_dv = []
 
-for row_dv in csv_file_dv:
+for header_row_dv in csv_file_dv:
     try:
-        high_dv = int(row_dv[4])
-        low_dv = int(row_dv[5])
-        date_dv = datetime.strptime(row_dv[2], "%Y-%m-%d")
+        high_dv = int(header_row_dv["TMAX"])
+        low_dv = int(header_row_dv["TMIN"])
+        date_dv = datetime.strptime(header_row_dv["DATE"], "%Y-%m-%d")
     except ValueError:
         print(f"Missing data for entry {date_dv}")
     else:
@@ -85,7 +87,7 @@ for row_dv in csv_file_dv:
 
 fig, ax = plt.subplots(2, sharex = True)
 fig.suptitle("Temperature comparison between SITKA AIRPORT, AK US and DEATH VALLEY, CA US", fontsize = 16)
-ax[0].set_title("SITKA AIRPORT, AK US")
+ax[0].set_title(header_row_s["NAME"])
 ax[0].plot(dates_s, highs_s, c = "red", alpha = 0.5)
 ax[0].plot(dates_s, lows_s, c = "blue", alpha = 0.5)
 ax[0].fill_between(dates_s, highs_s, lows_s, facecolor = "blue", alpha = 0.1)
@@ -94,7 +96,7 @@ ax[0].tick_params(axis = "x", labelsize = 13)
 # Repeat process for DEATH VALLEY records.
 # ("sharex" is added as an argument for subplots(), since both subplots share the same x-axis values.)
 
-ax[1].set_title("DEATH VALLEY, CA US")
+ax[1].set_title(header_row_dv["NAME"])
 ax[1].plot(dates_dv, highs_dv, c = "red", alpha = 0.5)
 ax[1].plot(dates_dv, lows_dv, c = "blue", alpha = 0.5)
 ax[1].fill_between(dates_dv, highs_dv, lows_dv, facecolor = "blue", alpha = 0.1)
